@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101b2b">
+  <title>Smart Campus | Route & Resource Planner</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Smart Campus home">
+        <span class="brand-mark">SC</span>
+        <span class="brand-copy"><strong>Smart Campus</strong><small>Route & Resource Planner</small></span>
+      </a>
+      <div class="topbar-right">
+        <span class="daa-tag">DAA PROJECT</span>
+        <span class="server-state"><span class="state-dot"></span><span id="serverStatus">Connecting to local engine</span></span>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">CAMPUS GRAPH • SHORTEST PATHS • MINIMUM SPANNING TREE</p>
+          <h1>Find the best way<br><span>across campus.</span></h1>
+          <p class="hero-description">Explore campus locations, calculate the shortest walking route, and plan a low-distance connection network with classic DAA algorithms.</p>
+          <div class="hero-chips"><span><i class="mini-dot cyan"></i>Dijkstra's algorithm</span><span><i class="mini-dot violet"></i>Prim & Kruskal</span><span><i class="mini-dot lime"></i>Search & sort</span></div>
+        </div>
+        <div class="hero-stat-card">
+          <div class="stat-icon">⌖</div>
+          <span class="stat-label">DEMO CAMPUS MODEL</span>
+          <div class="stat-number" id="heroBuildingCount">12</div>
+          <div class="stat-caption">locations connected by paths</div>
+          <div class="stat-bottom"><span id="heroPathCount">21 path links</span><span class="stat-pill">Local data</span></div>
+        </div>
+      </section>
+
+      <section class="metric-row" aria-label="Project highlights">
+        <article class="metric-card"><span class="metric-symbol cyan-bg">↗</span><div><small>ROUTE ENGINE</small><strong>Dijkstra</strong><p>Shortest path · non-negative weights</p></div></article>
+        <article class="metric-card"><span class="metric-symbol violet-bg">⌘</span><div><small>NETWORK PLANNER</small><strong>Prim / Kruskal</strong><p>Minimum spanning tree</p></div></article>
+        <article class="metric-card"><span class="metric-symbol lime-bg">⌕</span><div><small>BUILDING FINDER</small><strong>Search & sort</strong><p>Linear search · alphabetical order</p></div></article>
+      </section>
+
+      <div class="workspace-grid">
+        <section class="panel route-panel">
+          <div class="panel-heading"><div><p class="eyebrow">01 / NAVIGATION</p><h2>Route planner</h2><p class="panel-subtitle">Choose two places to calculate the shortest route.</p></div><span class="heading-icon cyan-bg">↗</span></div>
+          <form id="routeForm" class="route-form">
+            <label for="sourceSelect">STARTING LOCATION</label>
+            <div class="select-wrap"><span class="select-marker start-marker"></span><select id="sourceSelect" required><option value="gate">Main Gate</option></select></div>
+            <div class="route-connector"><span></span><small>DESTINATION</small></div>
+            <div class="select-wrap"><span class="select-marker end-marker"></span><select id="destinationSelect" required><option value="library">Central Library</option></select></div>
+            <div class="form-actions"><button class="btn btn-primary" type="submit">Find shortest route <span>→</span></button><button class="btn btn-quiet" type="button" id="swapRoute" aria-label="Swap start and destination">⇄</button></div>
+          </form>
+          <div class="result-card" id="routeResult" aria-live="polite">
+            <div class="result-empty"><span class="empty-icon">⌖</span><strong>Your route will appear here</strong><p>Select a start and destination, then run Dijkstra.</p></div>
+          </div>
+          <div class="complexity-note"><span>ALGORITHM COMPLEXITY</span><code>O((V + E) log V)</code></div>
+        </section>
+
+        <section class="panel map-panel">
+          <div class="panel-heading map-heading"><div><p class="eyebrow">02 / CAMPUS MAP</p><h2>Campus graph</h2><p class="panel-subtitle">Click any node after selecting a map target below.</p></div><button type="button" class="icon-button" id="resetMap" title="Clear route and network highlights">↺</button></div>
+          <div class="map-toolbar"><div class="legend"><span><i class="legend-line normal-line"></i>Path</span><span><i class="legend-line route-line"></i>Shortest route</span><span><i class="legend-line mst-line"></i>Planned network</span></div><div class="map-pick"><label for="mapPickMode">Map click sets</label><select id="mapPickMode"><option value="to">Destination</option><option value="from">Starting point</option></select></div></div>
+          <div class="map-frame"><svg id="campusMap" viewBox="0 0 840 520" role="img" aria-label="Interactive campus graph map"><text x="420" y="250" text-anchor="middle" class="map-loading">Loading campus graph…</text></svg></div>
+          <div class="map-foot"><span><i class="tiny-circle"></i>Nodes represent buildings</span><span><i class="tiny-line"></i>Edge weights are approximate metres</span></div>
+        </section>
+      </div>
+
+      <section class="panel network-panel">
+        <div class="panel-heading"><div><p class="eyebrow">03 / RESOURCE PLANNING</p><h2>Minimum-distance campus network</h2><p class="panel-subtitle">Compare Prim's and Kruskal's algorithm for connecting every location with the minimum total edge distance.</p></div><span class="heading-icon violet-bg">⌘</span></div>
+        <div class="network-controls"><div class="network-select-group"><label for="mstAlgorithm">ALGORITHM</label><select id="mstAlgorithm"><option value="prim">Prim's algorithm</option><option value="kruskal">Kruskal's algorithm</option></select></div><button class="btn btn-secondary" id="buildNetwork" type="button">Plan minimum network <span>→</span></button><p class="method-note">The edge weights are illustrative walking distances. The total is a planning estimate, not a real construction budget.</p></div>
+        <div id="networkResult" class="network-result" aria-live="polite"><div class="result-empty compact-empty"><span class="empty-icon">⌘</span><strong>Your minimum network will appear here</strong><p>Choose Prim or Kruskal and run the planner.</p></div></div>
+      </section>
+
+      <div class="lower-grid">
+        <section class="panel search-panel">
+          <div class="panel-heading"><div><p class="eyebrow">04 / FIND A PLACE</p><h2>Building search</h2><p class="panel-subtitle">Search by building name, type, or description.</p></div><span class="heading-icon lime-bg">⌕</span></div>
+          <form class="search-form" id="searchForm"><div class="search-input-wrap"><span>⌕</span><input id="searchInput" type="search" placeholder="Try ‘library’ or ‘health’" autocomplete="off"></div><button class="btn btn-primary" type="submit">Search</button></form>
+          <div class="search-meta" id="searchMeta">Uses linear search · O(V)</div>
+          <div id="searchResults" class="search-results"><p class="muted-message">Enter a word to find campus locations.</p></div>
+        </section>
+        <section class="panel directory-panel">
+          <div class="panel-heading"><div><p class="eyebrow">05 / CAMPUS DIRECTORY</p><h2>All locations</h2><p class="panel-subtitle">View the campus data in sorted order.</p></div><span class="heading-icon cyan-bg">☷</span></div>
+          <div class="directory-toolbar"><span id="directoryCount">12 locations</span><label for="directorySort" class="sr-only">Sort buildings</label><select id="directorySort"><option value="name">Name: A to Z</option><option value="za">Name: Z to A</option><option value="category">Category</option></select></div>
+          <div id="directoryList" class="directory-list"><p class="muted-message">Loading locations…</p></div>
+          <div class="complexity-note"><span>SORTING COMPLEXITY</span><code>O(V log V)</code></div>
+        </section>
+      </div>
+
+      <section class="algorithm-strip">
+        <div><span class="strip-number">01</span><div><strong>Dijkstra</strong><p>Shortest path in a weighted graph</p><code>O((V + E) log V)</code></div></div>
+        <div><span class="strip-number">02</span><div><strong>Prim</strong><p>Grow a minimum spanning tree</p><code>O(E log V)</code></div></div>
+        <div><span class="strip-number">03</span><div><strong>Kruskal</strong><p>Select edges with a disjoint set</p><code>O(E log E)</code></div></div>
+        <div><span class="strip-number">04</span><div><strong>Linear search</strong><p>Find matching campus locations</p><code>O(V)</code></div></div>
+      </section>
+    </main>
+    <footer class="footer"><span><strong>Smart Campus</strong> · DAA mini project</span><span>Illustrative campus data · No GPS or live map service</span></footer>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+</body>
+</html>
