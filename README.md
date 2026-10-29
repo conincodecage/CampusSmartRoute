@@ -123,6 +123,3 @@ The script checks static file serving, Dijkstra, Prim/Kruskal agreement, search 
 - **Linear search:** checks each building's searchable text for the requested term.
 - **Sorting:** sorts the directory using a comparison function.
 
-## Important learning note
-
-This project is designed to be explainable in a DAA viva. Please personalize the campus dataset and report, run the test cases on your own machine, and make sure you can explain Dijkstra, MST, and the difference between Prim and Kruskal.
